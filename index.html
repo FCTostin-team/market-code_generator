@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCT-Team Code Generator</title>
+    <link rel="icon" href="https://i.ibb.co/jZz8g0Rk/market16-17.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Market Code Generator By FCT-team</h1>
+    <div class="block">
+        <label for="quality-percentages">Проценты для качества (normal, uncommon, rare, epic, legendary):</label>
+        <input type="text" id="quality-percentages" value="0,30,120,270,600" />
+    </div>
+	
+    <div class="block">
+        <label for="discount-percentage">Уменьшить стоимость на (%):</label>
+        <input type="number" id="discount-percentage" value="10" min="0" max="100" step="1" />
+    </div>
+	
+    <div class="block">
+        <label>
+            <input type="checkbox" id="toggle-second-sentences" onchange="toggleSecondSentences()">
+            Скрыть каждое 2 предложение
+        </label>
+    </div>
+	
+    <div class="block">
+        <label for="num-rows">Количество предложений:</label>
+		<span id="half-value">(1)</span>
+        <input type="number" id="num-rows" value="2" min="2" step="2" oninput="updateHalfValue()" />
+        <button onclick="generateRows()">Добавить строки</button>
+    </div>
+
+    <div id="rows-container" class="block"></div>
+
+    <div class="block">
+        <button onclick="generateCode()">Обновить код</button>
+		<button onclick="toggleCodeTags()">Добавить/Убрать [code] теги</button>
+    </div>
+
+    <div class="block">
+        <textarea id="output" readonly></textarea>
+        <button onclick="copyToClipboard()">Скопировать код</button>
+    </div>
+
+    <div id="dropdown-modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="background: rgb(89, 89, 89); margin: 50px auto; padding: 20px; width: 80%; max-width: 800px; border-radius: 10px; position: relative;">
+            <h2>Выберите предмет</h2>
+            <div class="search-container">
+                <input type="text" id="search-input" class="search-input" placeholder="Поиск пердмета..." onkeyup="filterItems()">
+            </div>
+            <div class="dropdown-container" id="dropdown-items"></div>
+            <div class="pagination" id="pagination-controls"></div>
+            <button onclick="closeDropdown()">Закрыть</button>
+        </div>
+    </div>
+
+    <div style="text-align: right; font-size: 0.8em; line-height: 0.4; opacity: 0.8;"> 
+        <p>🐞YouTube: <a href="https://www.youtube.com/@FCT-Ostin" target="_blank">ссылка</a></p>
+        <p>💙Telegram: <a href="https://t.me/FCTostin" target="_blank">ссылка</a></p>
+        <p>🎮Steam Группа: <a href="https://steamcommunity.com/groups/FCTgroup" target="_blank">ссылка</a></p>
+        <p>🕹️Patreon: <a href="https://www.patreon.com/c/OstinFCT" target="_blank">ссылка</a></p>
+        <p>🪐Boosty: <a href="https://boosty.to/ostinfct" target="_blank">ссылка</a></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
