@@ -9,23 +9,20 @@
 </head>
 <body>
     <div class="lang-switcher">
-        <button class="lang-switcher-button" onclick="toggleLanguageMenu()">🌐 Language</button>
-        <div id="lang-menu" class="lang-menu hidden">
-            <select id="lang-select" class="lang-dropdown" onchange="setLanguage(this.value)">
-                <option value="ru">Русский</option>
-                <option value="en">English</option>
-                <option value="uk">Українська</option>
-                <option value="kk">Қазақша</option>
-                <option value="cs">Čeština</option>
-                <option value="nl">Nederlands</option>
-                <option value="sv">Svenska</option>
-                <option value="de">Deutsch</option>
-                <option value="pl">Polski</option>
-                <option value="fr">Français</option>
-                <option value="zh">中文</option>
-                <option value="ja">日本語</option>
-            </select>
-        </div>
+        <select id="lang-select" class="lang-dropdown" onchange="setLanguage(this.value)" aria-label="Language selector">
+            <option value="ru">Русский</option>
+            <option value="en">English</option>
+            <option value="uk">Українська</option>
+            <option value="kk">Қазақша</option>
+            <option value="cs">Čeština</option>
+            <option value="nl">Nederlands</option>
+            <option value="sv">Svenska</option>
+            <option value="de">Deutsch</option>
+            <option value="pl">Polski</option>
+            <option value="fr">Français</option>
+            <option value="zh">中文</option>
+            <option value="ja">日本語</option>
+        </select>
     </div>
 
     <h1 data-i18n="title">Market Code Generator By FCT-team</h1>

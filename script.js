@@ -337,11 +337,6 @@ function setLanguage(language) {
     applyTranslations();
 }
 
-function toggleLanguageMenu() {
-    const menu = document.getElementById('lang-menu');
-    menu.classList.toggle('hidden');
-}
-
 function updateHalfValue() {
     const numRows = parseInt(document.getElementById('num-rows').value, 10) || 0;
     document.getElementById('half-value').textContent = `(${Math.floor(numRows / 2)})`;
@@ -362,12 +357,6 @@ document.addEventListener("DOMContentLoaded", () => {
     updateHalfValue();
     generateRows();
 
-    document.addEventListener('click', (event) => {
-        const switcher = document.querySelector('.lang-switcher');
-        if (switcher && !switcher.contains(event.target)) {
-            document.getElementById('lang-menu').classList.add('hidden');
-        }
-    });
 });
 
 function openDropdown(target) {
