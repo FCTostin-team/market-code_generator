@@ -8,63 +8,96 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Market Code Generator By FCT-team</h1>
+    <div class="lang-switcher">
+        <button class="lang-switcher-button" onclick="toggleLanguageMenu()">🌐 Language</button>
+        <div id="lang-menu" class="lang-menu hidden">
+            <select id="lang-select" class="lang-dropdown" onchange="setLanguage(this.value)">
+                <option value="ru">Русский</option>
+                <option value="en">English</option>
+                <option value="uk">Українська</option>
+                <option value="kk">Қазақша</option>
+                <option value="cs">Čeština</option>
+                <option value="nl">Nederlands</option>
+                <option value="sv">Svenska</option>
+                <option value="de">Deutsch</option>
+                <option value="pl">Polski</option>
+                <option value="fr">Français</option>
+                <option value="zh">中文</option>
+                <option value="ja">日本語</option>
+            </select>
+        </div>
+    </div>
+
+    <h1 data-i18n="title">Market Code Generator By FCT-team</h1>
+
     <div class="block">
-        <label for="quality-percentages">Проценты для качества (normal, uncommon, rare, epic, legendary):</label>
+        <label for="quality-percentages" data-i18n="qualityPercentagesLabel">Проценты для качества (normal, uncommon, rare, epic, legendary):</label>
         <input type="text" id="quality-percentages" value="0,30,120,270,600" />
     </div>
-	
+
     <div class="block">
-        <label for="discount-percentage">Уменьшить стоимость на (%):</label>
+        <label for="discount-percentage" data-i18n="discountLabel">Уменьшить стоимость на (%):</label>
         <input type="number" id="discount-percentage" value="10" min="0" max="100" step="1" />
     </div>
-	
+
     <div class="block">
         <label>
             <input type="checkbox" id="toggle-second-sentences" onchange="toggleSecondSentences()">
-            Скрыть каждое 2 предложение
+            <span data-i18n="hideEverySecond">Скрыть каждое 2 предложение</span>
         </label>
     </div>
-	
+
     <div class="block">
-        <label for="num-rows">Количество предложений:</label>
-		<span id="half-value">(1)</span>
+        <label for="num-rows" data-i18n="numberOfOffers">Количество предложений:</label>
+        <span id="half-value">(1)</span>
         <input type="number" id="num-rows" value="2" min="2" step="2" oninput="updateHalfValue()" />
-        <button onclick="generateRows()">Добавить строки</button>
+        <button onclick="generateRows()" data-i18n="addRows">Добавить строки</button>
     </div>
 
     <div id="rows-container" class="block"></div>
 
     <div class="block">
-        <button onclick="generateCode()">Обновить код</button>
-		<button onclick="toggleCodeTags()">Добавить/Убрать [code] теги</button>
+        <button onclick="generateCode()" data-i18n="refreshCode">Обновить код</button>
+        <button onclick="toggleCodeTags()" data-i18n="toggleCodeTags">Добавить/Убрать [code] теги</button>
     </div>
 
     <div class="block">
         <textarea id="output" readonly></textarea>
-        <button onclick="copyToClipboard()">Скопировать код</button>
+        <button onclick="copyToClipboard()" data-i18n="copyCode">Скопировать код</button>
     </div>
 
-    <div id="dropdown-modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
-        <div style="background: rgb(89, 89, 89); margin: 50px auto; padding: 20px; width: 80%; max-width: 800px; border-radius: 10px; position: relative;">
-            <h2>Выберите предмет</h2>
+    <div id="dropdown-modal" class="dropdown-modal hidden">
+        <div class="dropdown-modal-content">
+            <h2 data-i18n="chooseItem">Выберите предмет</h2>
             <div class="search-container">
-                <input type="text" id="search-input" class="search-input" placeholder="Поиск пердмета..." onkeyup="filterItems()">
+                <input type="text" id="search-input" class="search-input" data-i18n-placeholder="searchPlaceholder" placeholder="Поиск предмета..." onkeyup="filterItems()">
             </div>
             <div class="dropdown-container" id="dropdown-items"></div>
             <div class="pagination" id="pagination-controls"></div>
-            <button onclick="closeDropdown()">Закрыть</button>
+            <button onclick="closeDropdown()" data-i18n="close">Закрыть</button>
         </div>
     </div>
 
-    <div style="text-align: right; font-size: 0.8em; line-height: 0.4; opacity: 0.8;"> 
-        <p>🐞YouTube: <a href="https://www.youtube.com/@FCT-Ostin" target="_blank">ссылка</a></p>
-        <p>💙Telegram: <a href="https://t.me/FCTostin" target="_blank">ссылка</a></p>
-        <p>🎮Steam Группа: <a href="https://steamcommunity.com/groups/FCTgroup" target="_blank">ссылка</a></p>
-        <p>🕹️Patreon: <a href="https://www.patreon.com/c/OstinFCT" target="_blank">ссылка</a></p>
-        <p>🪐Boosty: <a href="https://boosty.to/ostinfct" target="_blank">ссылка</a></p>
+    <div class="contacts">
+        <p>🐞YouTube: <a href="https://www.youtube.com/@FCT-Ostin" target="_blank" data-i18n="linkText">ссылка</a></p>
+        <p>💙Telegram: <a href="https://t.me/FCTostin" target="_blank" data-i18n="linkText">ссылка</a></p>
+        <p>🎮Steam Группа: <a href="https://steamcommunity.com/groups/FCTgroup" target="_blank" data-i18n="linkText">ссылка</a></p>
+        <p>🕹️Patreon: <a href="https://www.patreon.com/c/OstinFCT" target="_blank" data-i18n="linkText">ссылка</a></p>
+        <p>🪐Boosty: <a href="https://boosty.to/ostinfct" target="_blank" data-i18n="linkText">ссылка</a></p>
     </div>
 
+    <script src="profiles/ru.js"></script>
+    <script src="profiles/en.js"></script>
+    <script src="profiles/uk.js"></script>
+    <script src="profiles/kk.js"></script>
+    <script src="profiles/cs.js"></script>
+    <script src="profiles/nl.js"></script>
+    <script src="profiles/sv.js"></script>
+    <script src="profiles/de.js"></script>
+    <script src="profiles/pl.js"></script>
+    <script src="profiles/fr.js"></script>
+    <script src="profiles/zh.js"></script>
+    <script src="profiles/ja.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

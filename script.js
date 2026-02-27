@@ -1,6 +1,8 @@
 const itemsPerPage = 32;
+const defaultLanguage = 'ru';
 let currentPage = 1;
 let currentDropdownTarget = null;
+let currentLanguage = defaultLanguage;
 const items = [
     { icon: "https://wiki.factorio.com/images/thumb/Wooden_chest.png/32px-Wooden_chest.png", product: "wooden-chest", count: 2 },
     { icon: "https://wiki.factorio.com/images/thumb/Iron_chest.png/32px-Iron_chest.png", product: "iron-chest", count: 10 },
@@ -269,25 +271,114 @@ const items = [
     { icon: "https://wiki.factorio.com/images/thumb/Railgun_turret.png/32px-Railgun_turret.png", product: "railgun-turret", count: 25568 }
 ];
 
+
+
+function getProfile() {
+    if (!window.languageProfiles) {
+        return {};
+    }
+    return window.languageProfiles[currentLanguage] || window.languageProfiles[defaultLanguage] || {};
+}
+
+function t(key) {
+    const profile = getProfile();
+    return profile[key] || key;
+}
+
+function applyTranslations() {
+    document.documentElement.lang = currentLanguage;
+
+    document.querySelectorAll('[data-i18n]').forEach((element) => {
+        const key = element.dataset.i18n;
+        element.textContent = t(key);
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach((element) => {
+        const key = element.dataset.i18nPlaceholder;
+        element.placeholder = t(key);
+    });
+
+    updateRowsTranslation();
+}
+
+function updateRowsTranslation() {
+    document.querySelectorAll('.row').forEach((row) => {
+        const buyLabel = row.querySelector('.buy-label');
+        const sellLabel = row.querySelector('.sell-label');
+        const quantityLabels = row.querySelectorAll('.quantity-label');
+        const qualityLabels = row.querySelectorAll('.quality-label');
+
+        if (buyLabel) {
+            buyLabel.textContent = t('buyItem');
+        }
+        if (sellLabel) {
+            sellLabel.textContent = t('sellItem');
+        }
+        quantityLabels.forEach((label) => {
+            label.textContent = t('quantity');
+        });
+        qualityLabels.forEach((label) => {
+            label.textContent = t('quality');
+        });
+    });
+}
+
+function setLanguage(language) {
+    if (!window.languageProfiles || !window.languageProfiles[language]) {
+        return;
+    }
+
+    currentLanguage = language;
+    localStorage.setItem('market_generator_lang', language);
+    const select = document.getElementById('lang-select');
+    if (select) {
+        select.value = language;
+    }
+    applyTranslations();
+}
+
+function toggleLanguageMenu() {
+    const menu = document.getElementById('lang-menu');
+    menu.classList.toggle('hidden');
+}
+
 function updateHalfValue() {
     const numRows = parseInt(document.getElementById('num-rows').value, 10) || 0;
     document.getElementById('half-value').textContent = `(${Math.floor(numRows / 2)})`;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    const savedLanguage = localStorage.getItem('market_generator_lang');
+    if (savedLanguage && window.languageProfiles && window.languageProfiles[savedLanguage]) {
+        currentLanguage = savedLanguage;
+    }
+
+    const select = document.getElementById('lang-select');
+    if (select) {
+        select.value = currentLanguage;
+    }
+
+    applyTranslations();
     updateHalfValue();
     generateRows();
+
+    document.addEventListener('click', (event) => {
+        const switcher = document.querySelector('.lang-switcher');
+        if (switcher && !switcher.contains(event.target)) {
+            document.getElementById('lang-menu').classList.add('hidden');
+        }
+    });
 });
 
 function openDropdown(target) {
     currentDropdownTarget = target;
     currentPage = 1;
     renderDropdown();
-    document.getElementById('dropdown-modal').style.display = 'block';
+    document.getElementById('dropdown-modal').classList.remove('hidden');
 }
 
 function closeDropdown() {
-    document.getElementById('dropdown-modal').style.display = 'none';
+    document.getElementById('dropdown-modal').classList.add('hidden');
 }
 
 function renderDropdown() {
@@ -321,44 +412,45 @@ function generateRows() {
         rowDiv.className = 'row';
 
         if (Math.floor(i / 2) % 2 === 1) {
-            rowDiv.style.backgroundColor = '#696969'; 
+            rowDiv.classList.add('row-alt');
         }
 
         rowDiv.innerHTML = `
-            <div>
-                <label>Что мы будем покупать (item):</label>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <input type="text" class="price-item" readonly value="coin" onclick="openDropdown(this)" />
-                    <img src="" alt="Item icon" class="price-item-icon" style="width: 32px; height: 32px; display: none;" />
+            <div class="row-columns">
+                <div class="row-column">
+                    <label class="buy-label">${t('buyItem')}</label>
+                    <div class="item-control">
+                        <input type="text" class="price-item" readonly value="coin" onclick="openDropdown(this)" />
+                        <img src="" alt="Item icon" class="price-item-icon item-icon hidden-icon" />
+                    </div>
+                    <label class="quantity-label">${t('quantity')}</label>
+                    <input type="number" class="price-count" value="1" />
+                    <label class="quality-label">${t('quality')}</label>
+                    <select class="price-quality">
+                        <option value="normal">normal</option>
+                        <option value="uncommon">uncommon</option>
+                        <option value="rare">rare</option>
+                        <option value="epic">epic</option>
+                        <option value="legendary">legendary</option>
+                    </select>
                 </div>
-                <label>Количество:</label>
-                <input type="number" class="price-count" value="1" />
-                <label>Качество:</label>
-                <select class="price-quality">
-                    <option value="normal">normal</option>
-                    <option value="uncommon">uncommon</option>
-                    <option value="rare">rare</option>
-                    <option value="epic">epic</option>
-                    <option value="legendary">legendary</option>
-                </select>
-            </div>
-            <div>
-                <label>Что мы будем отдавать (item):</label>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <input type="text" class="offer-item" readonly value="coin" onclick="openDropdown(this)" />
-                    <img src="https://i.ibb.co/ZG3wCR1/coin.png" 
-                         alt="Item icon" class="offer-item-icon" style="width: 32px; height: 32px;" />
+                <div class="row-column">
+                    <label class="sell-label">${t('sellItem')}</label>
+                    <div class="item-control">
+                        <input type="text" class="offer-item" readonly value="coin" onclick="openDropdown(this)" />
+                        <img src="https://i.ibb.co/ZG3wCR1/coin.png" alt="Item icon" class="offer-item-icon item-icon" />
+                    </div>
+                    <label class="quantity-label">${t('quantity')}</label>
+                    <input type="number" class="offer-count" value="1" />
+                    <label class="quality-label">${t('quality')}</label>
+                    <select class="offer-quality">
+                        <option value="normal">normal</option>
+                        <option value="uncommon">uncommon</option>
+                        <option value="rare">rare</option>
+                        <option value="epic">epic</option>
+                        <option value="legendary">legendary</option>
+                    </select>
                 </div>
-                <label>Количество:</label>
-                <input type="number" class="offer-count" value="1" />
-                <label>Качество:</label>
-                <select class="offer-quality">
-                    <option value="normal">normal</option>
-                    <option value="uncommon">uncommon</option>
-                    <option value="rare">rare</option>
-                    <option value="epic">epic</option>
-                    <option value="legendary">legendary</option>
-                </select>
             </div>
         `;
 
@@ -462,7 +554,7 @@ function copyToClipboard() {
     const output = document.getElementById('output');
     output.select();
     document.execCommand('copy');
-    alert('Код маркета скопирован');
+    alert(t('copiedAlert'));
 }
 
 function filterItems() {
